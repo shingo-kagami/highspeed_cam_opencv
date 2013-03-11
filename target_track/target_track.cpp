@@ -133,6 +133,11 @@ dispThread(MsgLink<DispMsg> *ld, MsgLink<UiMsg> *lu)
 void
 setTemplate(cv::Mat& frame, cv::Mat& templ, cv::Point& center)
 {
+    center.x = (int)MAX(center.x, TEMPLATE_SIZE/2);
+    center.y = (int)MAX(center.y, TEMPLATE_SIZE/2);
+    center.x = (int)MIN(center.x, frame.cols - 1 - TEMPLATE_SIZE/2);
+    center.y = (int)MIN(center.y, frame.rows - 1 - TEMPLATE_SIZE/2);
+    
     cv::getRectSubPix(frame, cv::Size(TEMPLATE_SIZE, TEMPLATE_SIZE),
                       center, templ);
 }
