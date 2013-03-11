@@ -91,10 +91,10 @@ void
 drawTrackRect(cv::Mat& image, cv::Point& center, int thickness)
 {
     cv::rectangle(image, 
-                  cv::Point(center.x - TEMPLATE_SIZE/2,
-                            center.y - TEMPLATE_SIZE/2),
-                  cv::Point(center.x + TEMPLATE_SIZE/2 - 1,
-                            center.y + TEMPLATE_SIZE/2 - 1),
+                  cv::Point(center.x - TEMPLATE_SIZE / 2,
+                            center.y - TEMPLATE_SIZE / 2),
+                  cv::Point(center.x + TEMPLATE_SIZE / 2 - 1,
+                            center.y + TEMPLATE_SIZE / 2 - 1),
                   CV_RGB(0, 0, 255), thickness);
 }
 
@@ -133,10 +133,10 @@ dispThread(MsgLink<DispMsg> *ld, MsgLink<UiMsg> *lu)
 void
 setTemplate(cv::Mat& frame, cv::Mat& templ, cv::Point& center)
 {
-    center.x = (int)MAX(center.x, TEMPLATE_SIZE/2);
-    center.y = (int)MAX(center.y, TEMPLATE_SIZE/2);
-    center.x = (int)MIN(center.x, frame.cols - 1 - TEMPLATE_SIZE/2);
-    center.y = (int)MIN(center.y, frame.rows - 1 - TEMPLATE_SIZE/2);
+    center.x = (int)MAX(center.x, TEMPLATE_SIZE / 2);
+    center.y = (int)MAX(center.y, TEMPLATE_SIZE / 2);
+    center.x = (int)MIN(center.x, frame.cols - 1 - TEMPLATE_SIZE / 2);
+    center.y = (int)MIN(center.y, frame.rows - 1 - TEMPLATE_SIZE / 2);
     
     cv::getRectSubPix(frame, cv::Size(TEMPLATE_SIZE, TEMPLATE_SIZE),
                       center, templ);
@@ -146,18 +146,18 @@ void
 trackTemplate(cv::Mat& frame, cv::Mat& templ, cv::Point& center)
 {
     cv::Point stl, sbr;
-    stl.x = (int)MAX(center.x - SEARCH_SIZE/2, 0);
-    stl.y = (int)MAX(center.y - SEARCH_SIZE/2, 0);
-    sbr.x = (int)MIN(center.x + SEARCH_SIZE/2 - 1, frame.cols - 1);
-    sbr.y = (int)MIN(center.y + SEARCH_SIZE/2 - 1, frame.rows - 1);
+    stl.x = (int)MAX(center.x - SEARCH_SIZE / 2, 0);
+    stl.y = (int)MAX(center.y - SEARCH_SIZE / 2, 0);
+    sbr.x = (int)MIN(center.x + SEARCH_SIZE / 2 - 1, frame.cols - 1);
+    sbr.y = (int)MIN(center.y + SEARCH_SIZE / 2 - 1, frame.rows - 1);
     cv::Mat search(frame, cv::Rect(stl.x, stl.y,
                                    sbr.x - stl.x + 1, sbr.y - stl.y + 1));
     cv::Mat result;
     cv::matchTemplate(search, templ, result, CV_TM_SQDIFF_NORMED);
     cv::Point minloc;
     cv::minMaxLoc(result, NULL, NULL, &minloc);
-    center.x = stl.x + minloc.x + TEMPLATE_SIZE/2;
-    center.y = stl.y + minloc.y + TEMPLATE_SIZE/2;
+    center.x = stl.x + minloc.x + TEMPLATE_SIZE / 2;
+    center.y = stl.y + minloc.y + TEMPLATE_SIZE / 2;
 }
 
 int
