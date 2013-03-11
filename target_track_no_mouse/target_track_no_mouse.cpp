@@ -157,7 +157,9 @@ main()
         md->index = (md->index + 1) % NHISTORY;
         md->center[md->index] = center;
         ld->send();
-        if (ld->isClosed()) { break; }
+        if (ld->isClosed()) {
+            break;
+        }
     }
     return 0;
 }

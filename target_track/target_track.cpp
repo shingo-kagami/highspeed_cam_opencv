@@ -180,7 +180,9 @@ main()
         md->index = (md->index + 1) % NHISTORY;
         md->center[md->index] = center;
         ld->send();
-        if (ld->isClosed()) { break; }
+        if (ld->isClosed()) {
+            break;
+        }
 
         UiMsg *mu = lu->receive();
         if (mu != NULL) {
