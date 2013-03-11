@@ -10,12 +10,12 @@
 #define SEARCH_SIZE 72
 #define NHISTORY 32
 
-class VideoCapturePGR : public cv::VideoCapture {
+class VideoCaptureFlyCap : public cv::VideoCapture {
 public:
-    VideoCapturePGR(int device) {
+    VideoCaptureFlyCap(int device) {
         open(device);
     }
-    ~VideoCapturePGR() {
+    ~VideoCaptureFlyCap() {
         flycaptureStop(flycapture);
         flycaptureDestroyContext(flycapture);
     }
@@ -163,7 +163,7 @@ trackTemplate(cv::Mat& frame, cv::Mat& templ, cv::Point& center)
 int
 main()
 {
-    VideoCapturePGR cap(0);
+    VideoCaptureFlyCap cap(0);
     MsgLink<DispMsg> linkd, *ld = &linkd;
     MsgLink<UiMsg> linku, *lu = &linku;
     boost::thread th(boost::bind(dispThread, ld, lu));
