@@ -16,7 +16,7 @@ private:
 template<class CustomMsgData>
 class MsgLink {
 public:
-    MsgLink() : master_seqno(0) {
+    MsgLink() : master_seqno(0), closed(false) {
         md_snd = new CustomMsgData();
         md_med = new CustomMsgData();
         md_rcv = new CustomMsgData();
@@ -41,7 +41,7 @@ public:
 
     bool isUpdated() const {
         return md_med->seqno > md_rcv->seqno;
-    };
+    }
 
     CustomMsgData *receive() {
         if (!isUpdated()) {
@@ -50,6 +50,14 @@ public:
         boost::mutex::scoped_lock lock(mt);
         swapPtr(&md_med, &md_rcv);
         return md_rcv;
+    }
+
+    bool isClosed() const {
+        return closed;
+    }
+    
+    void close() {
+        closed = true;
     }
     
 private:
@@ -65,6 +73,7 @@ private:
     CustomMsgData *md_rcv;
     boost::mutex mt;
     unsigned int master_seqno;
+    bool closed;
 };
 
 #endif /* _MSGLINK_HPP_ */

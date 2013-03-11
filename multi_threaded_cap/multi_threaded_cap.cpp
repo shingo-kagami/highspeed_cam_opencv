@@ -8,8 +8,6 @@ public:
     cv::Mat image;
 };
 
-int f_exit = 0;
-
 void
 dispThread(MsgLink<DispMsg> *ld)
 {
@@ -23,7 +21,7 @@ dispThread(MsgLink<DispMsg> *ld)
             break;
         }
     }
-    f_exit = 1;
+    ld->close();
 }
 
 int
@@ -37,7 +35,7 @@ main()
         cap >> md->image;
         // do_some_processing(md->image);
         ld->send();
-        if (f_exit) {
+        if (ld->isClosed()) {
             break;
         }
     }

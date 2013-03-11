@@ -72,7 +72,6 @@ public:
 class UiMsg : public MsgData {
 public:
     cv::Point mpos;
-    int f_exit;
 };
 
 void
@@ -84,7 +83,6 @@ onMouse(int event, int x, int y, int flags, void *param)
         UiMsg *mu = lu->prepareMsg();
         mu->mpos.x = x;
         mu->mpos.y = y;
-        mu->f_exit = 0;
         lu->send();
     }
 }
@@ -129,10 +127,7 @@ dispThread(MsgLink<DispMsg> *ld, MsgLink<UiMsg> *lu)
             break;
         }
     }
-
-    UiMsg *mu = lu->prepareMsg();
-    mu->f_exit = 1;
-    lu->send();
+    ld->close();
 }
 
 void
@@ -180,12 +175,10 @@ main()
         md->index = (md->index + 1) % NHISTORY;
         md->center[md->index] = center;
         ld->send();
+        if (ld->isClosed()) { break; }
 
         UiMsg *mu = lu->receive();
         if (mu != NULL) {
-            if (mu->f_exit) {
-                break;
-            }
             center = mu->mpos;
             setTemplate(md->image, templ, center);
         }
