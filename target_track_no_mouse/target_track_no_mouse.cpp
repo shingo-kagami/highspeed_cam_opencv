@@ -59,7 +59,8 @@ public:
         if (image.rows == 0) {
             image = cv::Mat(buffer.image.iRows, buffer.image.iCols, CV_8U);
         }
-        memcpy((uchar *)image.data, (uchar *)buffer.image.pData, image.rows * image.cols);
+        memcpy((uchar *)image.data, (uchar *)buffer.image.pData,
+               image.rows * image.cols);
         flycaptureUnlock(flycapture, buffer.uiBufferIndex);
         return true;
     }
