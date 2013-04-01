@@ -1,3 +1,9 @@
+/**
+ @file target_track.cpp
+ @brief A template-matching exmaple with a separate GUI thread.
+ @author Shingo W. Kagami swk(at)ic.is.tohoku.ac.jp
+ */
+
 #include <string.h>
 #include "opencv2/opencv.hpp"
 #include <boost/thread.hpp>
@@ -10,6 +16,18 @@
 #define SEARCH_SIZE 72
 #define NHISTORY 32
 
+/**
+ * A subsclass of cv::VideoCapture that encapsulates PGRFlyCapture
+ * API.  For simplicity, this implementation assumes that both the
+ * camera and the output image are in monochrome 8-bit format (see the
+ * comment in retrieve() method).
+ *
+ * Usage:
+ *    VideoCaptureFlyCap cap(n); // n: device index of FlyCapture camera
+ * 
+ *  Once cap is obtained, it can be used just like cv::VideoCapture
+ *  object (see main() function for a sample usage).
+ */
 class VideoCaptureFlyCap : public cv::VideoCapture {
 public:
     VideoCaptureFlyCap(int device) {
@@ -37,6 +55,13 @@ public:
         return true;
     }
     bool retrieve(cv::Mat& image, int channel = 0) {
+        /*
+         * We assume that the camera takes a monochrome 8-bit image
+         * whose pData can be simply copied to cv::Mat image data in
+         * CV_8U format.  For more general image formats, demosaicing
+         * functions such as flycaptureConvertImage() are needed
+         * instead of just memcpy().
+         */
         if (image.rows == 0) {
             image = cv::Mat(buffer.image.iRows, buffer.image.iCols, CV_8U);
         }
@@ -51,6 +76,14 @@ private:
     FlyCaptureImagePlus buffer;
 };
 
+/*
+ * A message for displaying the results, containing the image, a ring
+ * buffer for the trajectory of the tracked center (recent NHISTORY
+ * points), and the index to the latest point in the ring buffer.  The
+ * ring buffer and the index need to be copied between the sender's
+ * buffer and the intermediate buffer because their previous values
+ * are used for frame-by-frame updates, while the image need not.
+ */
 class DispMsg : public MsgData {
 public:
     DispMsg() {
@@ -70,6 +103,10 @@ public:
     int index;
 };
 
+/*
+ * A message for UI, namely used for mouse event notification.  The
+ * mouse pointer position is contained.
+ */
 class UiMsg : public MsgData {
 public:
     cv::Point mpos;
@@ -81,6 +118,7 @@ onMouse(int event, int x, int y, int flags, void *param)
     MsgLink<UiMsg> *lu = (MsgLink<UiMsg> *)param;
 
     if (event == CV_EVENT_LBUTTONDOWN) {
+        // Mouse position (x, y) is set as a message
         UiMsg *mu = lu->prepareMsg();
         mu->mpos.x = x;
         mu->mpos.y = y;
@@ -114,12 +152,16 @@ void
 dispThread(MsgLink<DispMsg> *ld, MsgLink<UiMsg> *lu)
 {
     cv::namedWindow("disp", CV_WINDOW_AUTOSIZE);
+
+    // Delegate the UI message link to the mouse callback function
     cv::setMouseCallback("disp", onMouse, lu);
+
+    // for displaying the tracking results in color
     cv::Mat dispimg;
 
     while (1) {
         DispMsg *md = ld->receive();
-        if (md != NULL) {
+        if (md != NULL) { // If a display message is received
             cv::cvtColor(md->image, dispimg, CV_GRAY2BGR);
             drawTrackResults(dispimg, md);
             cv::imshow("disp", dispimg);
@@ -164,32 +206,47 @@ trackTemplate(cv::Mat& frame, cv::Mat& templ, cv::Point& center)
 int
 main()
 {
+    // 0-th FlyCap camera
     VideoCaptureFlyCap cap(0);
+
+    // MsgLink to display thread
     MsgLink<DispMsg> linkd, *ld = &linkd;
+
+    // MsgLink from display thread
     MsgLink<UiMsg> linku, *lu = &linku;
+
+    // Display thread is created
     boost::thread th(boost::bind(dispThread, ld, lu));
 
     cv::Mat frame, img, templ;
+
+    // Template image is sampled from around the center of the first frame
     cap >> frame;
     cv::Point center(frame.cols / 2, frame.rows / 2);
     setTemplate(frame, templ, center);
 
     while (1) {
+        // Captured image is directly stored in the message to be sent
         DispMsg *md = ld->prepareMsg();
         cap >> md->image;
+
+        // Tracking results are written into the ring buffer in the message
         trackTemplate(md->image, templ, center);
         md->index = (md->index + 1) % NHISTORY;
         md->center[md->index] = center;
+
         ld->send();
-        if (ld->isClosed()) {
+        if (ld->isClosed()) { // Check if the peer has finished
             break;
         }
 
         UiMsg *mu = lu->receive();
-        if (mu != NULL) {
+        if (mu != NULL) { // If the mouse button pressed
+            // Template image is sampled from around the mouse position
             center = mu->mpos;
             setTemplate(md->image, templ, center);
         }
     }
+
     return 0;
 }

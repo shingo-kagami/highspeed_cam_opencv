@@ -1,3 +1,9 @@
+/**
+ @file multi_threaded_cap.cpp
+ @brief A simplest sample code of using MsgLink.
+ @author Shingo W. Kagami swk(at)ic.is.tohoku.ac.jp
+ */
+
 #include "opencv2/opencv.hpp"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
