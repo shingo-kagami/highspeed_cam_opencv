@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "single_threaded_cap", "single_threaded_cap\single_threaded_cap.vcproj", "{87554183-25E5-4BCD-A2E9-691BC01EDCAE}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "multi_threaded_cap", "multi_threaded_cap\multi_threaded_cap.vcproj", "{46564629-AC4D-4B6D-AFCA-EE64879B4C29}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "target_track", "target_track\target_track.vcproj", "{5DE928A5-F743-4161-B1F1-3D27AF3C505A}"
@@ -15,14 +13,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Debug|Win32.Build.0 = Debug|Win32
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Debug|x64.ActiveCfg = Debug|x64
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Debug|x64.Build.0 = Debug|x64
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Release|Win32.ActiveCfg = Release|Win32
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Release|Win32.Build.0 = Release|Win32
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Release|x64.ActiveCfg = Release|x64
-		{87554183-25E5-4BCD-A2E9-691BC01EDCAE}.Release|x64.Build.0 = Release|x64
 		{46564629-AC4D-4B6D-AFCA-EE64879B4C29}.Debug|Win32.ActiveCfg = Debug|Win32
 		{46564629-AC4D-4B6D-AFCA-EE64879B4C29}.Debug|Win32.Build.0 = Debug|Win32
 		{46564629-AC4D-4B6D-AFCA-EE64879B4C29}.Debug|x64.ActiveCfg = Debug|x64
