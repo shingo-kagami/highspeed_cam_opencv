@@ -1,5 +1,7 @@
 # High-speed vision examples utilizing OpenCV
 
+[![Click to open YouTube](https://img.youtube.com/vi/v3jOkJZxVZU/0.jpg)](https://www.youtube.com/watch?v=v3jOkJZxVZU)
+
 This project holds supplementary source files for the following
 tutorial article: 
 
